@@ -1,8 +1,7 @@
 ## webapp
-
-webserver_name: spree.ryanbigg.com
-deploy_directory: /data/spree
-app_name: spree
+webserver_name: 192.168.74.134
+deploy_directory: /home/deploy/postman
+app_name: postman
 
 ## stolen from https://github.com/jgrowl/ansible-playbook-ruby-from-src
 rubyTmpDir: /usr/local/src

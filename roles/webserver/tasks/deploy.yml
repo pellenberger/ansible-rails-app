@@ -20,3 +20,6 @@
 
 - name: Install database.yml
   template: src=database.yml.j2 dest={{deploy_directory}}/shared/config/database.yml force=yes mode=755 owner=deploy
+
+- name: Install secrets.yml
+  template: src=secrets.yml.j2 dest={{deploy_directory}}/shared/config/secrets.yml force=yes mode=755 owner=deploy
