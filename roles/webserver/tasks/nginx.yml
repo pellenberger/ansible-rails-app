@@ -1,5 +1,31 @@
-- name: Install nginx
-  apt: pkg=nginx state=latest
+- name: Add Phusion Passenger APT Key
+  apt_key: keyserver=keyserver.ubuntu.com id=561F9B9CAC40B2F7 state=present
+
+- name: Install HTTPS support for API
+  apt: name={{ item }} state=present  
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+
+- name: Add Phusion Passenger APT Repository
+  apt_repository:
+    repo: "deb https://oss-binaries.phusionpassenger.com/apt/passenger precise main"
+    state: present
+
+- name: APT update
+  action: apt update_cache=yes
+
+- name: Install Nginx + Passenger
+  apt: name={{ item }} state=present  
+  with_items:
+    - nginx-extras
+    - passenger
+
+- name: Enable the Passenger Nginx module (1)
+  lineinfile: dest=/etc/nginx/nginx.conf regexp="passenger_root" line="passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;"    
+
+- name: Enable the Passenger Nginx module (2)
+  lineinfile: dest=/etc/nginx/nginx.conf regexp="passenger_ruby" line="passenger_ruby /usr/local/bin/ruby;"
 
 - name: Remove the default app
   command: rm -rf /etc/nginx/sites-enabled/default
