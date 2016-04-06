@@ -9,6 +9,7 @@ deploy_directory: /home/{{deploy_user}}/{{app_name}}
 
 ## database
 postgres_user: <postgres_user_name>
+# attention : if password starts with a number, it has to be between quotation marks
 postgres_password: <postgres_user_password>
 database_name: "{{app_name}}_production"
 
