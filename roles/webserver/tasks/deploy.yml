@@ -20,5 +20,8 @@
 - name: Install secrets.yml
   template: src=secrets.yml.j2 dest={{deploy_directory}}/shared/config/secrets.yml force=yes mode=755 owner={{deploy_user}}
 
-- name: Copy ssh public key from management machine to host
+- name: Copy ssh public key from management machine to host (deploy user, used by Capistrano script)
   authorized_key: user={{deploy_user}} key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name: Copy ssh public key from management machine to host (ansible user, used by Ansible playbook)
+  authorized_key: user={{ansible_user}} key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
