@@ -1,13 +1,11 @@
 - name: Create deployment user
-  user: name=deploy comment="Application deployment user" generate_ssh_key=yes ssh_key_bits=4096
-
-- authorized_key: user=deploy key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  user: name={{deploy_user}} comment="Application deployment user" generate_ssh_key=yes ssh_key_bits=4096
 
 - name: Create deployment directory
-  file: path={{deploy_directory}} owner=deploy group=deploy state=directory
+  file: path={{deploy_directory}} owner={{deploy_user}} group={{deploy_user}} state=directory
 
 - name: Make shared directories
-  file: path={{deploy_directory}}/shared/{{item}} group=deploy owner=deploy state=directory
+  file: path={{deploy_directory}}/shared/{{item}} group={{deploy_user}} owner={{deploy_user}} state=directory
   with_items:
     - tmp
     - log
@@ -15,10 +13,12 @@
     - bundle
     - bin
     - config
-  tags: shared
-
+    
 - name: Install database.yml
-  template: src=database.yml.j2 dest={{deploy_directory}}/shared/config/database.yml force=yes mode=755 owner=deploy
+  template: src=database.yml.j2 dest={{deploy_directory}}/shared/config/database.yml force=yes mode=755 owner={{deploy_user}}
 
 - name: Install secrets.yml
-  template: src=secrets.yml.j2 dest={{deploy_directory}}/shared/config/secrets.yml force=yes mode=755 owner=deploy
+  template: src=secrets.yml.j2 dest={{deploy_directory}}/shared/config/secrets.yml force=yes mode=755 owner={{deploy_user}}
+
+- name: Copy ssh public key from management machine to host
+  authorized_key: user={{deploy_user}} key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
